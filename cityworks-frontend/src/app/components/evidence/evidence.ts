@@ -32,8 +32,9 @@ function extractError(err: any): string {
 export class Evidence implements OnInit {
   loading = true;
   allItems: any[] = [];
-  totalEvidence = 0;
-  pendingUploads = 0;
+  totalEvidence: number = 0;
+  pendingUploads: number = 0;
+  verifiedCount: number = 0;
   myTasks: any[] = [];
   showUploadModal = false;
   saving = false;
@@ -98,6 +99,7 @@ export class Evidence implements OnInit {
     this.pendingUploads = this.myTasks.filter(
       (t) => !myEvidence.find((e) => e.taskId === t.taskId),
     ).length;
+    this.verifiedCount = myEvidence.filter((e) => e.status === 'VERIFIED').length;  
   }
 
   get myEvidenceItems(): any[] {
