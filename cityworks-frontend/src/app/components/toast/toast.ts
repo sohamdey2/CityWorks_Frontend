@@ -8,24 +8,26 @@ import { ToastService } from '../../services/toast.service';
   imports: [CommonModule],
   template: `
     <div class="toast-container">
-      <div *ngFor="let t of toast.toasts"
-           class="toast-item toast-{{t.type}}"
-           [class.toast-exit]="false">
-        <div class="toast-icon">
+      @for (t of toast.toasts; track t) {
+        <div
+          class="toast-item toast-{{t.type}}"
+          [class.toast-exit]="false">
+          <div class="toast-icon">
           <i class="bi" [ngClass]="{
             'bi-x-circle-fill': t.type==='error',
             'bi-check-circle-fill': t.type==='success',
             'bi-exclamation-triangle-fill': t.type==='warning',
             'bi-info-circle-fill': t.type==='info'
           }"></i>
+          </div>
+          <span class="toast-message">{{ t.message }}</span>
+          <button class="toast-close" (click)="toast.dismiss(t.id)" aria-label="Close">
+            <i class="bi bi-x"></i>
+          </button>
         </div>
-        <span class="toast-message">{{ t.message }}</span>
-        <button class="toast-close" (click)="toast.dismiss(t.id)" aria-label="Close">
-          <i class="bi bi-x"></i>
-        </button>
-      </div>
+      }
     </div>
-  `,
+    `,
   styles: [`
     .toast-container {
       position: fixed;

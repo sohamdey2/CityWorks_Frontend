@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { AssetService } from '../../services/asset.service';
@@ -22,7 +21,7 @@ function extractError(err: any): string {
 
 @Component({
   selector: 'app-assets',
-  imports: [NgIf, NgFor, FormsModule],
+  imports: [FormsModule],
   templateUrl: './assets.html',
   styleUrl: './assets.css'
 })

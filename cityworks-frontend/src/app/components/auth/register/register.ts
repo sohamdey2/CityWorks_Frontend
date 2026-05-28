@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, RouterLink, CommonModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -38,14 +38,14 @@ export class Register {
         role: 'CITIZEN',
       })
       .subscribe({
-        next: () => {
+        next: (res) => {
           this.loading = false;
           this.success = 'Registration successful! Redirecting to login...';
           setTimeout(() => this.router.navigate(['/login']), 1500);
         },
         error: (err) => {
           this.loading = false;
-          this.error = err?.error?.message || 'Registration failed.';
+          this.error = err?.error||err?.message || 'Registration failed.';
         },
       });
   }

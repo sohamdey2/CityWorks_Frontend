@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
@@ -26,7 +26,7 @@ function extractError(err: any): string {
 
 @Component({
   selector: 'app-maintenance',
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './maintenance.html',
   styleUrl: './maintenance.css',
 })

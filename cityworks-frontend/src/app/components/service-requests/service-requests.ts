@@ -162,4 +162,29 @@ export class ServiceRequests implements OnInit {
     };
     return m[s] ?? 'badge-pending';
   }
+  resolve(id:number){
+    this.workOrderSvc.getByRequestId(id).subscribe({
+      next: (order) => {
+        const status = order.status;
+        if(status !== 'COMPLETED'){
+          this.toast.warning('WorkOrder should be Completed to Resolve');
+          return;
+        }
+        this.svc.updateRequestStatusById(id, 'CLOSED').subscribe({
+          next: () => {
+            this.load();
+            this.toast.success('Resolved Successfully.');
+          },
+          error: () => {
+            console.log('Something went wrong');
+          },
+        });
+      },
+      error:(error) => {
+        console.log(error);
+       
+        this.toast.error(extractError(error));
+      }
+    });
+  }
 }

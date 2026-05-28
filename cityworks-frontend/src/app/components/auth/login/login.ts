@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
@@ -25,7 +25,7 @@ function extractError(err: any): string {
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink, CommonModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

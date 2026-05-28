@@ -27,27 +27,39 @@
     </div>
   </div>
 
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-  <div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-amber"></div></div>
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+  @if (loading) {
+    <div class="text-center py-5"><div class="spinner-border text-amber"></div></div>
+  }
 
-  <div class="card" *ngIf="!loading">
-    <div class="card-body p-0">
-      <div *ngIf="items.length === 0" class="text-center py-4 text-muted">No audit logs found.</div>
-      <table class="table table-hover mb-0" *ngIf="items.length > 0">
-        <thead>
-          <tr><th>ID</th><th>Action</th><th>Resource</th><th>Service</th><th>Details</th><th>Timestamp</th></tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let log of items">
-            <td>#{{ log.auditId }}</td>
-            <td><span class="badge-progress">{{ log.action }}</span></td>
-            <td>{{ log.resourceType }}</td>
-            <td>{{ log.serviceName }}</td>
-            <td>{{ log.details }}</td>
-            <td>{{ log.timestamp | slice:0:19 }}</td>
-          </tr>
-        </tbody>
-      </table>
+  @if (!loading) {
+    <div class="card">
+      <div class="card-body p-0">
+        @if (items.length === 0) {
+          <div class="text-center py-4 text-muted">No audit logs found.</div>
+        }
+        @if (items.length > 0) {
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr><th>ID</th><th>Action</th><th>Resource</th><th>Service</th><th>Details</th><th>Timestamp</th></tr>
+            </thead>
+            <tbody>
+              @for (log of items; track log) {
+                <tr>
+                  <td>#{{ log.auditId }}</td>
+                  <td><span class="badge-progress">{{ log.action }}</span></td>
+                  <td>{{ log.resourceType }}</td>
+                  <td>{{ log.serviceName }}</td>
+                  <td>{{ log.details }}</td>
+                  <td>{{ log.timestamp | slice:0:19 }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
     </div>
-  </div>
+  }
 </div>

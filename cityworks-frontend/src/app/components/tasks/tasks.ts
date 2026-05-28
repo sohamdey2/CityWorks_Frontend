@@ -6,6 +6,9 @@ import { AuthService } from '../../services/auth.service';
 import { TaskService } from '../../services/task.service';
 import { WorkOrderService } from '../../services/work-order.service';
 import { ToastService } from '../../services/toast.service';
+import { CreateTask, Task, UpdateTask } from '../../models/task.models';
+import { CitizenResponse } from '../../models/auth.models';
+import { WorkOrder } from '../../models/work-order.models';
 
 const BASE = 'http://localhost:7171/api/auth';
 
@@ -31,17 +34,17 @@ function extractError(err: any): string {
   styleUrl: './tasks.css',
 })
 export class Tasks implements OnInit {
-  items: any[] = [];
-  loading = true; error = '';
-  showModal = false; showStatusModal = false;
-  form = { workOrderId: 0, description: '', assignedTo: 0, dueDate: '' };
-  statusForm = { taskId: 0, status: 'IN_PROGRESS' };
-  saving = false; formSubmitted = false;
+  items: Task[] = [];
+  loading: boolean = true; error: string = '';
+  showModal: boolean = false; showStatusModal: boolean = false;
+  form: CreateTask = { workOrderId: 0, description: '', assignedTo: 0, dueDate: '' };
+  statusForm: UpdateTask & { taskId: number } = { taskId: 0, status: 'IN_PROGRESS' };
+  saving: boolean = false; formSubmitted: boolean = false;
   statuses = ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'BLOCKED', 'CANCELLED'];
-  workers: any[] = [];
-  workOrders: any[] = [];
+  workers: CitizenResponse[] = [];
+  workOrders: WorkOrder[] = [];
   expandedWorkOrderId: number | null = null;
-  tasksByWorkOrder: Record<number, any[]> = {};
+  tasksByWorkOrder: Record<number, Task[]> = {};
 
   constructor(
     public auth: AuthService,
@@ -53,15 +56,18 @@ export class Tasks implements OnInit {
 
   ngOnInit() {
     this.load();
-    if (this.auth.hasRole('SUPERVISOR')) { this.loadWorkers(); this.loadWorkOrders(); }
+    if (this.auth.hasRole('SUPERVISOR')) {
+      this.loadWorkers();
+      this.loadWorkOrders(); 
+    }
   }
 
   load() {
     this.loading = true;
     this.svc.getAll().subscribe({
       next: (r) => {
-        let all = r.data ?? r;
-        if (this.auth.hasRole('WORKER')) all = all.filter((t: any) => t.assignedTo === this.auth.getUserId());
+        let all: Task[] = r.data ?? r;
+        if (this.auth.hasRole('WORKER')) all = all.filter((t: Task) => t.assignedTo === this.auth.getUserId());
         this.items = all; this.loading = false;
       },
       error: (err) => { this.toast.error(extractError(err)); this.loading = false; },
@@ -69,8 +75,8 @@ export class Tasks implements OnInit {
   }
 
   loadWorkers() {
-    this.http.get<any>(`${BASE}/users/workers/active`).subscribe({
-      next: (r) => { this.workers = r.data ?? r; },
+    this.http.get<CitizenResponse[]>(`${BASE}/users/workers/active`).subscribe({
+      next: (r :any) => { this.workers = r.data ?? r; },
       error: (err) => { this.toast.error(extractError(err)); },
     });
   }
@@ -83,7 +89,7 @@ export class Tasks implements OnInit {
   }
 
   openModal() { this.form = { workOrderId: 0, description: '', assignedTo: 0, dueDate: '' }; this.formSubmitted = false; this.showModal = true; }
-  openStatus(item: any) { this.statusForm = { taskId: item.taskId, status: item.status }; this.showStatusModal = true; }
+  openStatus(item: Task) { this.statusForm = { taskId: item.taskId!, status: item.status ?? 'IN_PROGRESS' }; this.showStatusModal = true; }
 
   isFormValid(): boolean {
     return this.form.workOrderId > 0 && this.form.description.trim().length >= 5 && this.form.assignedTo > 0 && !!this.form.dueDate;
@@ -107,7 +113,8 @@ export class Tasks implements OnInit {
     });
   }
 
-  delete(id: number) {
+  delete(id: number | undefined) {
+    if(id == null) return;
     if (confirm('Delete this task?')) {
       this.svc.delete(id).subscribe({
         next: () => { this.load(); this.toast.success('Task deleted.'); },
@@ -117,22 +124,23 @@ export class Tasks implements OnInit {
   }
 
   workerName(id: number): string {
-    const w = this.workers.find(x => x.userId === id);
+    const w = this.workers.find((x: CitizenResponse) => x.userId === id);
     return w ? `${w.name} (#${w.userId})` : `#${id}`;
   }
 
   toggleWorkOrderTasks(workOrderId: number) {
     if (this.expandedWorkOrderId === workOrderId) { this.expandedWorkOrderId = null; return; }
     this.expandedWorkOrderId = workOrderId;
-    this.tasksByWorkOrder[workOrderId] = this.items.filter(t => t.workOrderId === workOrderId);
+    this.tasksByWorkOrder[workOrderId] = this.items.filter((t: Task) => t.workOrderId === workOrderId);
   }
 
   get uniqueWorkOrderIds(): number[] {
     return [...new Set(this.items.map(t => t.workOrderId))];
   }
 
-  statusClass(s: string) {
+  statusClass(s: string | undefined) {
     const m: Record<string, string> = { PENDING:'badge-pending', IN_PROGRESS:'badge-progress', COMPLETED:'badge-completed', BLOCKED:'badge-rejected', CANCELLED:'badge-rejected' };
-    return m[s] ?? 'badge-pending';
+    return s?(m[s] ?? 'badge-pending') : 'badge-pending';
   }
 }
+

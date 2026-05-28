@@ -10,6 +10,7 @@ import { WorkOrderService } from '../../services/work-order.service';
 import { AssetService } from '../../services/asset.service';
 import { TaskService } from '../../services/task.service';
 import { ToastService } from '../../services/toast.service';
+import { AuditLogService } from '../../services/audit-log.service';
 
 const BASE = 'http://localhost:7171/api/auth';
 
@@ -57,6 +58,7 @@ export class Dashboard implements OnInit {
     public auth: AuthService, private requestSvc: ServiceRequestService,
     private workOrderSvc: WorkOrderService, private assetSvc: AssetService,
     private taskSvc: TaskService, private http: HttpClient, private toast: ToastService,
+    private auditLogSvc: AuditLogService
   ) {}
 
   ngOnInit() {
@@ -181,7 +183,7 @@ export class Dashboard implements OnInit {
 
   loadAuditorDashboard() {
     this.loading = true;
-    this.http.get<any>(`${BASE}/audit-logs/all`).subscribe({
+    this.auditLogSvc.getAll().subscribe({
       next: (r) => { const d = r.data ?? r; this.totalAuditLogs = d.length; this.recentAuditLogs = d.slice(0, 10); this.loading = false; },
       error: (err) => { this.loading = false; this.toast.error(extractError(err)); },
     });

@@ -21,8 +21,7 @@ export const routes: Routes = [
       { path: 'inspections', loadComponent: () => import('./components/inspections/inspections').then(m => m.Inspections) },
       { path: 'maintenance', loadComponent: () => import('./components/maintenance/maintenance').then(m => m.Maintenance) },
       { path: 'evidence',    loadComponent: () => import('./components/evidence/evidence').then(m => m.Evidence) },
-      { path: 'audit-logs',  loadComponent: () => import('./components/audit-logs/audit-logs').then(m => m.AuditLogs) },
-      { path: 'reports',     loadComponent: () => import('./components/reports/reports').then(m => m.Reports) },
+      { path: 'audit-logs',  loadComponent: () => import('./components/audit-logs/audit-logs').then(m => m.AuditLogs) }
     ]
   },
   { path: '**', redirectTo: 'login' }
