@@ -141,8 +141,7 @@ export class WorkOrders implements OnInit {
       return;
     }
     this.saving = true;
-    this.svc
-      .assignWorker({
+    this.svc.assignWorker({
         orderId: this.editWorkerForm.orderId,
         workerId: this.editWorkerForm.workerId,
       })

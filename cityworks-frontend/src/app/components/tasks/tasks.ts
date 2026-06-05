@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SlicePipe, CommonModule } from '@angular/common';
+import {CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
@@ -14,32 +14,26 @@ const BASE = 'http://localhost:7171/api/auth';
 
 function extractError(err: any): string {
   const msg = err?.error?.message || err?.error?.error || err?.message;
-
-  if (typeof msg === 'string') {
-    return msg;
-  }
-
-  if (msg && typeof msg === 'object') {
-    const firstValue = Object.values(msg)[0];
-    return String(firstValue);
-  }
-
+  if (typeof msg === 'string') return msg;
+  if (msg && typeof msg === 'object') return String(Object.values(msg)[0]);
   return 'An unexpected error occurred.';
 }
 
 @Component({
   selector: 'app-tasks',
-  imports: [CommonModule, FormsModule, SlicePipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './tasks.html',
   styleUrl: './tasks.css',
 })
 export class Tasks implements OnInit {
   items: Task[] = [];
-  loading: boolean = true; error: string = '';
-  showModal: boolean = false; showStatusModal: boolean = false;
+  loading = true;
+  showModal = false;
+  showStatusModal = false;
   form: CreateTask = { workOrderId: 0, description: '', assignedTo: 0, dueDate: '' };
   statusForm: UpdateTask & { taskId: number } = { taskId: 0, status: 'IN_PROGRESS' };
-  saving: boolean = false; formSubmitted: boolean = false;
+  saving = false;
+  formSubmitted = false;
   statuses = ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'BLOCKED', 'CANCELLED'];
   workers: CitizenResponse[] = [];
   workOrders: WorkOrder[] = [];
@@ -58,7 +52,7 @@ export class Tasks implements OnInit {
     this.load();
     if (this.auth.hasRole('SUPERVISOR')) {
       this.loadWorkers();
-      this.loadWorkOrders(); 
+      this.loadWorkOrders();
     }
   }
 
@@ -68,15 +62,16 @@ export class Tasks implements OnInit {
       next: (r) => {
         let all: Task[] = r.data ?? r;
         if (this.auth.hasRole('WORKER')) all = all.filter((t: Task) => t.assignedTo === this.auth.getUserId());
-        this.items = all; this.loading = false;
+        this.items = all;
+        this.loading = false;
       },
       error: (err) => { this.toast.error(extractError(err)); this.loading = false; },
     });
   }
-
+  // Add an api endpoint  to get task for specific worker
   loadWorkers() {
     this.http.get<CitizenResponse[]>(`${BASE}/users/workers/active`).subscribe({
-      next: (r :any) => { this.workers = r.data ?? r; },
+      next: (r: any) => { this.workers = r.data ?? r; },
       error: (err) => { this.toast.error(extractError(err)); },
     });
   }
@@ -88,11 +83,27 @@ export class Tasks implements OnInit {
     });
   }
 
-  openModal() { this.form = { workOrderId: 0, description: '', assignedTo: 0, dueDate: '' }; this.formSubmitted = false; this.showModal = true; }
-  openStatus(item: Task) { this.statusForm = { taskId: item.taskId!, status: item.status ?? 'IN_PROGRESS' }; this.showStatusModal = true; }
+  openModal() {
+    this.form = { workOrderId: 0, description: '', assignedTo: 0, dueDate: '' };
+    this.formSubmitted = false;
+    this.showModal = true;
+  }
+
+  openStatus(item: Task) {
+    this.statusForm = { taskId: item.taskId!, status: item.status ?? 'IN_PROGRESS' };
+    this.showStatusModal = true;
+  }
 
   isFormValid(): boolean {
-    return this.form.workOrderId > 0 && this.form.description.trim().length >= 5 && this.form.assignedTo > 0 && !!this.form.dueDate;
+    return this.form.workOrderId > 0
+      && this.form.description.trim().length >= 5
+      && this.form.assignedTo > 0
+      && !!this.form.dueDate;
+  }
+
+  get minDate(): string {
+    const now = new Date();
+    return now.toISOString().slice(0, 16);
   }
 
   submit() {
@@ -114,11 +125,11 @@ export class Tasks implements OnInit {
   }
 
   delete(id: number | undefined) {
-    if(id == null) return;
+    if (id == null) return;
     if (confirm('Delete this task?')) {
       this.svc.delete(id).subscribe({
         next: () => { this.load(); this.toast.success('Task deleted.'); },
-        error: (err) => this.toast.error(extractError(err))
+        error: (err) => this.toast.error(extractError(err)),
       });
     }
   }
@@ -139,8 +150,13 @@ export class Tasks implements OnInit {
   }
 
   statusClass(s: string | undefined) {
-    const m: Record<string, string> = { PENDING:'badge-pending', IN_PROGRESS:'badge-progress', COMPLETED:'badge-completed', BLOCKED:'badge-rejected', CANCELLED:'badge-rejected' };
-    return s?(m[s] ?? 'badge-pending') : 'badge-pending';
+    const m: Record<string, string> = {
+      PENDING: 'badge-pending',
+      IN_PROGRESS: 'badge-progress',
+      COMPLETED: 'badge-completed',
+      BLOCKED: 'badge-rejected',
+      CANCELLED: 'badge-rejected',
+    };
+    return s ? (m[s] ?? 'badge-pending') : 'badge-pending';
   }
 }
-

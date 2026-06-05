@@ -25,28 +25,28 @@
             <div class="stat-card">
               <div class="stat-label">Total Users</div>
               <div class="stat-value">{{ totalUsers }}</div>
-              <div class="stat-sub text-muted">registered accounts</div>
+              <div class="stat-sub text-muted">Registered Accounts</div>
             </div>
           </div>
           <div class="col-md-4">
             <div class="stat-card">
               <div class="stat-label">Total Assets Registered</div>
               <div class="stat-value text-success">{{ totalAssets }}</div>
-              <div class="stat-sub text-muted">city assets</div>
+              <div class="stat-sub text-muted">City Assets</div>
             </div>
           </div>
           <div class="col-md-4">
             <div class="stat-card">
               <div class="stat-label">Pending Service Requests</div>
               <div class="stat-value" style="color: #856404">{{ pendingRequests }}</div>
-              <div class="stat-sub text-warning">awaiting action</div>
+              <div class="stat-sub text-warning">Awaiting Action</div>
             </div>
           </div>
         </div>
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <span>User Management</span
-              ><span class="text-muted" style="font-size: 0.8rem">{{ totalUsers }} users total</span>
+            <span>User Management</span>
+            <span class="text-muted" style="font-size: 0.8rem">{{ totalUsers }} users total</span>
             </div>
             <div class="card-body p-0">
               @if (users.length === 0) {
@@ -66,7 +66,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @for (u of users; track u) {
+                    @for (u of users; track u.userId) {
                       <tr>
                         <td>#{{ u.userId }}</td>
                         <td>{{ u.name }}</td>
@@ -81,9 +81,6 @@
                           }}</span>
                         </td>
                         <td>
-                          <button class="btn btn-sm btn-outline-secondary me-1" (click)="openEditUser(u)">
-                            <i class="bi bi-pencil"></i>
-                          </button>
                           <button
                             class="btn btn-sm"
                             [class.btn-outline-danger]="u.status === 'ACTIVE'"
@@ -114,26 +111,26 @@
               <div class="stat-card">
                 <div class="stat-label">New Requests</div>
                 <div class="stat-value" style="color: #856404">{{ totalNewRequests }}</div>
-                <div class="stat-sub text-warning">pending review</div>
+                <div class="stat-sub text-warning">Pending review</div>
               </div>
             </div>
             <div class="col-md-3">
               <div class="stat-card">
                 <div class="stat-label">Pending Requests</div>
                 <div class="stat-value" style="color: #084298">{{ totalPendingRequests }}</div>
-                <div class="stat-sub text-muted">not yet completed</div>
+                <div class="stat-sub text-muted">Not yet completed</div>
               </div>
             </div>
             <div class="col-md-3">
               <div class="stat-card">
-                <div class="stat-label">Pending Work Orders</div>
+                <div class="stat-label">Pending work orders</div>
                 <div class="stat-value" style="color: #0a3622">{{ totalPendingWorkOrders }}</div>
                 <div class="stat-sub text-muted">open / in progress</div>
               </div>
             </div>
             <div class="col-md-3">
               <div class="stat-card">
-                <div class="stat-label">Pending Tasks</div>
+                <div class="stat-label">Pending tasks</div>
                 <div class="stat-value" style="color: #58151c">{{ totalPendingTasks }}</div>
                 <div class="stat-sub text-muted">unfinished tasks</div>
               </div>
@@ -141,13 +138,11 @@
           </div>
           <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-              <span>Recent Requests</span
-                ><a
+              <span>Recent requests</span>
+              <a 
                 routerLink="/requests"
                 class="text-amber"
-                style="font-size: 0.85rem; text-decoration: none"
-                >View all &rarr;</a
-                >
+                style="font-size: 0.85rem; text-decoration: none">View all &rarr;</a>
               </div>
               <div class="card-body p-0">
                 @if (recentRequests.length === 0) {
@@ -167,12 +162,12 @@
                       </tr>
                     </thead>
                     <tbody>
-                      @for (r of recentRequests; track r) {
+                      @for (r of recentRequests; track r.requestId) {
                         <tr>
                           <td>#{{ r.requestId }}</td>
                           <td>{{ r.assetId }}</td>
                           <td>{{ r.description }}</td>
-                          <td>{{ r.submittedAt | slice: 0 : 10 }}</td>
+                          <td>{{ r.submittedAt | date: 'mediumDate' }}</td>
                           <td>
                             <span [class]="statusClass(r.status)">{{ r.status }}</span>
                           </td>
@@ -191,21 +186,21 @@
                 <div class="stat-card">
                   <div class="stat-label">Total Tasks</div>
                   <div class="stat-value">{{ totalTasks }}</div>
-                  <div class="stat-sub text-muted">assigned to me</div>
+                  <div class="stat-sub text-muted">Assigned to me</div>
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="stat-card">
                   <div class="stat-label">Tasks Completed</div>
                   <div class="stat-value text-success">{{ totalCompletedTasks }}</div>
-                  <div class="stat-sub text-muted">finished</div>
+                  <div class="stat-sub text-muted">Finished</div>
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="stat-card">
                   <div class="stat-label">Pending Tasks</div>
                   <div class="stat-value" style="color: #856404">{{ totalPendingTasksWorker }}</div>
-                  <div class="stat-sub text-warning">needs attention</div>
+                  <div class="stat-sub text-warning">Needs attention</div>
                 </div>
               </div>
             </div>
@@ -213,13 +208,13 @@
               <div class="col-md-6">
                 <div class="card">
                   <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>My Recent Tasks</span
-                      ><a
+                    <span>My Recent Tasks</span>
+                    <a
                       routerLink="/tasks"
                       class="text-amber"
                       style="font-size: 0.85rem; text-decoration: none"
-                      >View all &rarr;</a
-                      >
+                    >View all &rarr;
+                    </a>
                     </div>
                     <div class="card-body p-0">
                       @if (myTasks.length === 0) {
@@ -239,12 +234,12 @@
                             </tr>
                           </thead>
                           <tbody>
-                            @for (t of myTasks; track t) {
+                            @for (t of myTasks; track t.taskId) {
                               <tr>
                                 <td>#{{ t.taskId }}</td>
                                 <td>{{ t.workOrderId }}</td>
                                 <td>{{ t.description }}</td>
-                                <td>{{ t.dueDate | slice: 0 : 10 }}</td>
+                                <td>{{ t.dueDate | date: 'mediumDate'}}</td>
                                 <td>
                                   <span [class]="statusClass(t.status)">{{ t.status }}</span>
                                 </td>
@@ -259,8 +254,8 @@
                 <div class="col-md-6">
                   <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                      <span>My Work Orders</span
-                        ><a
+                      <span>My Work Orders</span>
+                      <a
                         routerLink="/work-orders"
                         class="text-amber"
                         style="font-size: 0.85rem; text-decoration: none"
@@ -284,11 +279,11 @@
                               </tr>
                             </thead>
                             <tbody>
-                              @for (w of myWorkOrders; track w) {
+                              @for (w of myWorkOrders; track w.workOrderId) {
                                 <tr>
                                   <td>#{{ w.workOrderId }}</td>
                                   <td>{{ w.assetId }}</td>
-                                  <td>{{ w.dueDate | slice: 0 : 10 }}</td>
+                                  <td>{{ w.dueDate | date: 'mediumDate' }}</td>
                                   <td>
                                     <span [class]="statusClass(w.status)">{{ w.status }}</span>
                                   </td>
@@ -309,34 +304,34 @@
                     <div class="stat-card">
                       <div class="stat-label">Total Requests</div>
                       <div class="stat-value">{{ totalRequests }}</div>
-                      <div class="stat-sub text-muted">submitted by me</div>
+                      <div class="stat-sub text-muted">Submitted by me</div>
                     </div>
                   </div>
                   <div class="col-md-4">
                     <div class="stat-card">
                       <div class="stat-label">Pending</div>
                       <div class="stat-value" style="color: #856404">{{ pendingRequests }}</div>
-                      <div class="stat-sub text-warning">awaiting review</div>
+                      <div class="stat-sub text-warning">Awaiting review</div>
                     </div>
                   </div>
                   <div class="col-md-4">
                     <div class="stat-card">
                       <div class="stat-label">Resolved</div>
                       <div class="stat-value text-success">{{ totalRequests - pendingRequests }}</div>
-                      <div class="stat-sub text-muted">completed / approved</div>
+                      <div class="stat-sub text-muted">Completed / Approved</div>
                     </div>
                   </div>
                 </div>
                 <div class="card">
                   <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>My Recent Requests</span
-                      ><a
+                    <span>My Recent Requests</span>
+                    <a
                       routerLink="/requests"
                       class="text-amber"
                       style="font-size: 0.85rem; text-decoration: none"
-                      >View all &rarr;</a
-                      >
-                    </div>
+                      >View all &rarr;
+                    </a>
+                  </div>
                     <div class="card-body p-0">
                       @if (myRequests.length > 0) {
                         <table class="table table-hover mb-0">
@@ -350,12 +345,12 @@
                             </tr>
                           </thead>
                           <tbody>
-                            @for (r of myRequests; track r) {
+                            @for (r of myRequests; track r.requestId) {
                               <tr>
                                 <td>#{{ r.requestId }}</td>
                                 <td>{{ r.assetId }}</td>
                                 <td>{{ r.description }}</td>
-                                <td>{{ r.submittedAt | slice: 0 : 10 }}</td>
+                                <td>{{ r.submittedAt | date: 'mediumDate' }}</td>
                                 <td>
                                   <span [class]="statusClass(r.status)">{{ r.status }}</span>
                                 </td>
@@ -374,21 +369,21 @@
                       <div class="stat-card">
                         <div class="stat-label">Total Audit Entries</div>
                         <div class="stat-value">{{ totalAuditLogs }}</div>
-                        <div class="stat-sub text-muted">immutable records</div>
+                        <div class="stat-sub text-muted">Immutable records</div>
                       </div>
                     </div>
                     <div class="col-md-4">
                       <div class="stat-card">
                         <div class="stat-label">Audit Reviews</div>
                         <div class="stat-value text-success">Active</div>
-                        <div class="stat-sub text-muted">append-only log</div>
+                        <div class="stat-sub text-muted">Append-only log</div>
                       </div>
                     </div>
                     <div class="col-md-4">
                       <div class="stat-card">
                         <div class="stat-label">Access Level</div>
                         <div class="stat-value" style="color: #084298">Read-Only</div>
-                        <div class="stat-sub text-muted">compliance view</div>
+                        <div class="stat-sub text-muted">Compliance view</div>
                       </div>
                     </div>
                   </div>
@@ -399,8 +394,8 @@
                         routerLink="/audit-logs"
                         class="text-amber"
                         style="font-size: 0.85rem; text-decoration: none"
-                        >View all &rarr;</a
-                        >
+                        >View all &rarr;
+                        </a>
                       </div>
                       <div class="card-body p-0">
                         @if (recentAuditLogs.length > 0) {
@@ -415,7 +410,7 @@
                               </tr>
                             </thead>
                             <tbody>
-                              @for (log of recentAuditLogs; track log) {
+                              @for (log of recentAuditLogs; track log.auditId) {
                                 <tr>
                                   <td>#{{ log.auditId }}</td>
                                   <td>
@@ -423,7 +418,7 @@
                                   </td>
                                   <td>{{ log.resourceType }}</td>
                                   <td>{{ log.details }}</td>
-                                  <td>{{ log.timestamp | slice: 0 : 19 }}</td>
+                                  <td>{{ log.timestamp | date: 'mediumDate' }}</td>
                                 </tr>
                               }
                             </tbody>
@@ -500,52 +495,3 @@
                             </div>
                           </div>
                         }
-
-                        <!-- Edit User Modal -->
-                        @if (showEditUserModal) {
-                          <div
-                            class="modal d-block"
-                            tabindex="-1"
-                            style="background: rgba(0, 0, 0, 0.5)"
-                            >
-                            <div class="modal-dialog">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h5 class="modal-title">Edit User #{{ editUserForm.id }}</h5>
-                                  <button class="btn-close" (click)="showEditUserModal = false"></button>
-                                </div>
-                                <div class="modal-body">
-                                  <div class="mb-3">
-                                    <label class="form-label">Full Name</label
-                                      ><input type="text" class="form-control" [(ngModel)]="editUserForm.name" />
-                                    </div>
-                                    <div class="mb-3">
-                                      <label class="form-label">Email</label
-                                        ><input type="email" class="form-control" [(ngModel)]="editUserForm.email" />
-                                      </div>
-                                      <div class="mb-3">
-                                        <label class="form-label">Username</label
-                                          ><input type="text" class="form-control" [(ngModel)]="editUserForm.username" />
-                                        </div>
-                                        <div class="mb-3">
-                                          <label class="form-label">Role</label>
-                                          <select class="form-select" [(ngModel)]="editUserForm.role">
-                                            @for (r of roles; track r) {
-                                              <option [value]="r">{{ r }}</option>
-                                            }
-                                          </select>
-                                        </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                        <button class="btn btn-secondary" (click)="showEditUserModal = false">Cancel</button>
-                                        <button class="btn btn-primary" (click)="saveEditUser()" [disabled]="savingEditUser">
-                                          @if (savingEditUser) {
-                                            <span class="spinner-border spinner-border-sm me-1"></span>
-                                            }Save
-                                            Changes
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                }

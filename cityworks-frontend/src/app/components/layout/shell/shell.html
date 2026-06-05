@@ -1,5 +1,14 @@
 <app-sidebar></app-sidebar>
+
 <div class="main-wrapper">
+  <div class="topbar">
+    <button class="sidebar-toggle-btn" (click)="toggleSidebar()" aria-label="Toggle menu">
+      <i class = "bi bi-list"></i>
+    </button>
+    <span class="topbar-title"><i class="bi buildings-fill me-2 text-amber"></i>Cityworks</span>
+    <span></span>
+  </div>
   <router-outlet></router-outlet>
 </div>
+
 <app-toast></app-toast>

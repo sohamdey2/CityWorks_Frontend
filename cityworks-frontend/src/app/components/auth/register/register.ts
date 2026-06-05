@@ -45,7 +45,7 @@ export class Register {
         },
         error: (err) => {
           this.loading = false;
-          this.error = err?.error||err?.message || 'Registration failed.';
+          this.error = err?.error?.message||err?.error?.error||err?.message || 'Registration failed.';
         },
       });
   }

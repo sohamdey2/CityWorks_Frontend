@@ -14,14 +14,18 @@
           <table class="table table-hover mb-0">
             <thead>
               <tr>
-                <th>ID</th><th>Request ID</th><th>Asset ID</th><th>Assigned Worker</th><th>Status</th>
-                @if (auth.hasRole('SUPERVISOR','ADMIN')) {
+                <th>ID</th>
+                <th>Request ID</th>
+                <th>Asset ID</th>
+                <th>Assigned Worker</th>
+                <th>Status</th>
+                @if (auth.hasRole('SUPERVISOR')) {
                   <th>Actions</th>
                 }
               </tr>
             </thead>
             <tbody>
-              @for (w of items; track w) {
+              @for (w of items; track w.workOrderId) {
                 <tr>
                   <td>#{{ w.workOrderId }}</td>
                   <td>{{ w.requestId }}</td>
@@ -46,15 +50,15 @@
                       <span [class]="statusClass(w.status)">{{ w.status }}</span>
                     }
                   </td>
-                  @if (auth.hasRole('SUPERVISOR','ADMIN')) {
+                  @if (auth.hasRole('SUPERVISOR')) {
                     <td>
-                      @if (auth.hasRole('SUPERVISOR') && (w.status==='CREATED' || w.status==='NEW' || w.status==='OPEN' || !w.assignedWorkerId)) {
+                      @if ((!w.assignedWorkerId)) {
                         <button class="btn btn-sm btn-outline-primary me-1"
                           (click)="openAssign(w)">
                           <i class="bi bi-person-check me-1"></i>Assign
                         </button>
                       }
-                      @if (auth.hasRole('SUPERVISOR') && w.assignedWorkerId) {
+                      @if (w.assignedWorkerId && w.status !== 'COMPLETED' && w.status !== 'CANCELLED') {
                         <button class="btn btn-sm btn-outline-secondary"
                           (click)="openEditWorker(w)">
                           <i class="bi bi-pencil me-1"></i>Edit Worker
@@ -81,11 +85,11 @@
                           <table class="table table-sm mb-0">
                             <thead><tr><th>Evidence ID</th><th>File URI</th><th>Uploaded At</th><th>Status</th></tr></thead>
                             <tbody>
-                              @for (e of evidenceByOrder[w.workOrderId]; track e) {
+                              @for (e of evidenceByOrder[w.workOrderId]; track e.evidenceId) {
                                 <tr>
                                   <td>#{{ e.evidenceId }}</td>
                                   <td><a [href]="e.fileURI" target="_blank" class="text-amber">{{ e.fileURI | slice:0:50 }}</a></td>
-                                  <td>{{ e.uploadedAt | slice:0:10 }}</td>
+                                  <td>{{ e.uploadedAt | date:'mediumDate' }}</td>
                                   <td><span [class]="e.status==='VERIFIED'||e.status==='APPROVED' ? 'badge-completed' : 'badge-pending'">{{ e.status }}</span></td>
                                 </tr>
                               }
@@ -157,7 +161,7 @@
           <button class="btn btn-primary" (click)="assign()" [disabled]="saving||assignForm.workerId===0">
             @if (saving) {
               <span class="spinner-border spinner-border-sm me-1"></span>
-              }Assign
+            }Assign
             </button>
           </div>
         </div></div>

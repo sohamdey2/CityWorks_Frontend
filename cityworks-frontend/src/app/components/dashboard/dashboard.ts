@@ -32,7 +32,7 @@ function extractError(err: any): string {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, SlicePipe, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -45,8 +45,6 @@ export class Dashboard implements OnInit {
   userFormSubmitted = false;
   roles = ['CITIZEN', 'WORKER', 'SUPERVISOR', 'ADMIN', 'AUDITOR'];
   togglingUserId: number | null = null;
-  showEditUserModal = false; savingEditUser = false;
-  editUserForm = { id: 0, name: '', email: '', username: '', role: '' };
   totalNewRequests = 0; totalPendingRequests = 0; totalPendingWorkOrders = 0; totalPendingTasks = 0;
   recentRequests: any[] = [];
   totalTasks = 0; totalCompletedTasks = 0; totalPendingTasksWorker = 0;
@@ -116,25 +114,6 @@ export class Dashboard implements OnInit {
     this.http.post<any>(`${BASE}/admin/register`, this.userForm).subscribe({
       next: () => { this.savingUser = false; this.showCreateUserModal = false; this.loadAdminDashboard(); this.toast.success('User created successfully.'); },
       error: (err) => { this.savingUser = false; this.toast.error(extractError(err)); },
-    });
-  }
-
-  openEditUser(user: any) {
-    this.editUserForm = { id: user.userId, name: user.name, email: user.email, username: user.username, role: user.role };
-    this.showEditUserModal = true;
-  }
-
-  saveEditUser() {
-    if (!this.editUserForm.name.trim() || !this.editUserForm.email.trim()) { this.toast.warning('Name and email are required.'); return; }
-    this.savingEditUser = true;
-    this.http.put<any>(`${BASE}/users/${this.editUserForm.id}`, this.editUserForm).subscribe({
-      next: (r) => {
-        const updated = r.data ?? r;
-        const idx = this.users.findIndex(u => u.userId === this.editUserForm.id);
-        if (idx !== -1) { this.users[idx] = { ...this.users[idx], ...updated }; this.users = [...this.users]; }
-        this.savingEditUser = false; this.showEditUserModal = false; this.toast.success('User updated successfully.');
-      },
-      error: (err) => { this.savingEditUser = false; this.toast.error(extractError(err)); },
     });
   }
 
