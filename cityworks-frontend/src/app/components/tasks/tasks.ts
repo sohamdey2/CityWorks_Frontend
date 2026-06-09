@@ -32,13 +32,14 @@ export class Tasks implements OnInit {
   showStatusModal = false;
   form: CreateTask = { workOrderId: 0, description: '', assignedTo: 0, dueDate: '' };
   statusForm: UpdateTask & { taskId: number } = { taskId: 0, status: 'IN_PROGRESS' };
-  saving = false;
-  formSubmitted = false;
-  statuses = ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'BLOCKED', 'CANCELLED'];
+  saving:boolean = false;
+  formSubmitted:boolean = false;
+  statuses:string[] = ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'BLOCKED', 'CANCELLED'];
   workers: CitizenResponse[] = [];
   workOrders: WorkOrder[] = [];
   expandedWorkOrderId: number | null = null;
   tasksByWorkOrder: Record<number, Task[]> = {};
+  currentUserId: number | null = null;
 
   constructor(
     public auth: AuthService,
@@ -46,7 +47,9 @@ export class Tasks implements OnInit {
     private workOrderSvc: WorkOrderService,
     private http: HttpClient,
     private toast: ToastService,
-  ) {}
+  ) {
+    this.currentUserId = this.auth.getUserId();
+  }
 
   ngOnInit() {
     this.load();
@@ -58,17 +61,39 @@ export class Tasks implements OnInit {
 
   load() {
     this.loading = true;
-    this.svc.getAll().subscribe({
-      next: (r) => {
-        let all: Task[] = r.data ?? r;
-        if (this.auth.hasRole('WORKER')) all = all.filter((t: Task) => t.assignedTo === this.auth.getUserId());
-        this.items = all;
+    if(this.auth.hasRole('WORKER')) {
+      if (!this.currentUserId) {
+        this.toast.error('User ID not found. Please log in again.');
         this.loading = false;
-      },
-      error: (err) => { this.toast.error(extractError(err)); this.loading = false; },
-    });
+        return;
+      }
+
+      this.svc.getTasksByWorkerId(this.currentUserId).subscribe({
+        next: (r) => {
+          this.items = r.data ?? r;
+          this.loading = false;
+          return;
+        },
+        error: (err) => {
+          this.toast.error(extractError(err));
+          this.loading = false;
+        },
+      });
+    }
+    else {
+      this.svc.getAll().subscribe({
+        next: (r: any) => {
+          this.items = r.data ?? r;
+          this.loading = false;
+        },
+        error: (err) => {
+          this.toast.error(extractError(err));
+          this.loading = false;
+        }
+      });
+    }
   }
-  // Add an api endpoint  to get task for specific worker
+
   loadWorkers() {
     this.http.get<CitizenResponse[]>(`${BASE}/users/workers/active`).subscribe({
       next: (r: any) => { this.workers = r.data ?? r; },

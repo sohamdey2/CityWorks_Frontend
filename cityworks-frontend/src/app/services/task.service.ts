@@ -11,6 +11,7 @@ export class TaskService {
 
   getAll(): Observable<any>           { return this.http.get<any>(API); }
   getById(id: number): Observable<any>{ return this.http.get<any>(`${API}/${id}`); }
+  getTasksByWorkerId(workerId: number): Observable<any> { return this.http.get<any>(`${API}/worker/${workerId}`); }
   create(body: CreateTask): Observable<any>  { return this.http.post<any>(API, body); }
   update(id: number, body: UpdateTask): Observable<any> { return this.http.patch<any>(`${API}/${id}`, body); }
   delete(id: number): Observable<any> { return this.http.delete<any>(`${API}/${id}`); }

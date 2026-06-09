@@ -135,9 +135,9 @@ export class Dashboard implements OnInit {
   loadWorkerDashboard() {
     this.loading = true;
     const workerId = this.auth.getUserId()!;
-    this.taskSvc.getAll().subscribe({
-      next: (r) => {
-        const d = (r.data ?? r).filter((t: any) => t.assignedTo === workerId);
+    this.taskSvc.getTasksByWorkerId(workerId).subscribe({
+      next: (r) => { 
+        const d = r.data ?? r;
         this.totalTasks = d.length; this.totalCompletedTasks = d.filter((t: any) => t.status === 'COMPLETED').length;
         this.totalPendingTasksWorker = d.filter((t: any) => t.status !== 'COMPLETED').length;
         this.myTasks = d.slice(0, 5); this.loading = false;

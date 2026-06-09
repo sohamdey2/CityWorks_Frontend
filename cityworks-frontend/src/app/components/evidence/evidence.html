@@ -67,7 +67,7 @@
               <div class="text-center py-3"><div class="spinner-border spinner-border-sm text-amber"></div></div>
             }
             @if (!loadingOrderDetail[wo.workOrderId]) {
-              @if ((orderTasks[wo.workOrderId]?.length ?? 0)===0) {
+              @if ((orderTasks[wo.workOrderId]?.length)===0) {
                 <div class="text-muted p-3" style="font-size:0.85rem">No tasks for this work order.</div>
               }
               @for (task of orderTasks[wo.workOrderId]; track task) {

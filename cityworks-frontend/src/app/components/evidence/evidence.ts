@@ -83,9 +83,9 @@ export class Evidence implements OnInit {
         this.toast.error(extractError(err));
       },
     });
-    this.taskSvc.getAll().subscribe({
+    this.taskSvc.getTasksByWorkerId(wid).subscribe({
       next: (r) => {
-        this.myTasks = (r.data ?? r).filter((t: any) => t.assignedTo === wid);
+        this.myTasks = r.data ?? r;
         this.computeWorkerStats();
       },
       error: () => {},
