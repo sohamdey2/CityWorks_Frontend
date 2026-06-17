@@ -27,8 +27,8 @@ function extractError(err: any): string {
 })
 export class Tasks implements OnInit {
   items: Task[] = [];
-  loading = true;
-  showModal = false;
+  loading:boolean = true;
+  showModal:boolean = false;
   showStatusModal = false;
   form: CreateTask = { workOrderId: 0, description: '', assignedTo: 0, dueDate: '' };
   statusForm: UpdateTask & { taskId: number } = { taskId: 0, status: 'IN_PROGRESS' };

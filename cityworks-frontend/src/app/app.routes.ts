@@ -23,7 +23,7 @@ export const routes: Routes = [
         path: 'requests',
         canActivate: [roleGuard(['CITIZEN', 'SUPERVISOR', 'ADMIN'])],
         loadComponent: () => import('./components/service-requests/service-requests').then(m => m.ServiceRequests) },
-      { 
+      {
         path: 'work-orders',
         canActivate: [roleGuard(['SUPERVISOR', 'WORKER', 'ADMIN', 'AUDITOR'])],
         loadComponent: () => import('./components/work-orders/work-orders').then(m => m.WorkOrders)
